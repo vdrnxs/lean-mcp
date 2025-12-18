@@ -24,18 +24,33 @@ def add(a: int, b: int) -> int:
     return a + b
 
 @mcp.tool()
-def subtract(a: int, b: int) -> int:
-    """Use this to subtract two numbers.
-    
+def read_file(file_path: str) -> str:
+    """Read and return the contents of a file.
+
     Args:
-        a: The first number.
-        b: The second number.
-    
+        file_path: The path to the file to read.
+
     Returns:
-        The difference of the two numbers.
+        The contents of the file as a string.
     """
-    logger.info(f">>> Tool: 'subtract' called with numbers '{a}' and '{b}'")
-    return a - b
+    logger.info(f">>> Tool: 'read_file' called with path '{file_path}'")
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        logger.info(f">>> Successfully read {len(content)} characters from '{file_path}'")
+        return content
+    except FileNotFoundError:
+        error_msg = f"Error: File not found - '{file_path}'"
+        logger.error(f">>> {error_msg}")
+        return error_msg
+    except PermissionError:
+        error_msg = f"Error: Permission denied - '{file_path}'"
+        logger.error(f">>> {error_msg}")
+        return error_msg
+    except Exception as e:
+        error_msg = f"Error reading file: {str(e)}"
+        logger.error(f">>> {error_msg}")
+        return error_msg
 
 if __name__ == "__main__":
     logger.info(f" MCP server started on port {os.getenv('PORT', 8080)}")
