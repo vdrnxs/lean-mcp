@@ -8,7 +8,7 @@ lean-mcp is a lean, no-frills foundation for building MCP servers. It provides e
 
 ## Features
 
-- **Streamable HTTP Transport** - RESTful API with session management
+- **Dual Transport Mode** - Automatic STDIO (Claude Desktop) or HTTP (web development)
 - **Filesystem Operations** - Complete file and directory management
 - **Clean Architecture** - SOLID principles with DRY error handling
 - **Type Safety** - Full type hints and validation with Pydantic
@@ -45,11 +45,34 @@ uv sync
 
 ### Start Server
 
+The server automatically detects its execution environment:
+
+**Development mode (HTTP):**
 ```bash
 uv run server.py
 ```
+The server starts on `http://0.0.0.0:8080/mcp`
 
-The server will start on `http://0.0.0.0:8080/mcp`
+**Claude Desktop mode (STDIO):**
+Configure in `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac):
+
+```json
+{
+  "mcpServers": {
+    "mew-filesystem": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "C:\\Users\\YOUR_USER\\Desktop\\code\lean-mcp",
+        "run",
+        "server.py"
+      ]
+    }
+  }
+}
+```
+
+Restart Claude Desktop to activate the tools.
 
 ### Test Server
 

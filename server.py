@@ -186,12 +186,21 @@ def file_info(file_path: str) -> str:
     return handle_file_operation("file_info", file_path, _info)
 
 if __name__ == "__main__":
-    logger.info(f" lean-mcp server started on port {os.getenv('PORT', 8080)}")
-    # Using streamable-http transport for HTTP-based communication.
-    asyncio.run(
-        mcp.run_async(
-            transport="streamable-http", 
-            host="0.0.0.0", 
-            port=os.getenv("PORT", 8080),
+    import sys
+
+    # Detectar si se ejecuta desde Claude Desktop (stdin no es terminal)
+    if not sys.stdin.isatty():
+        # Modo STDIO para Claude Desktop
+        logger.info("Starting lean-mcp server with STDIO transport")
+        asyncio.run(mcp.run_async(transport="stdio"))
+    else:
+        # Modo HTTP para desarrollo/web
+        port = int(os.getenv("PORT", 8080))
+        logger.info(f"Starting lean-mcp server on http://0.0.0.0:{port}")
+        asyncio.run(
+            mcp.run_async(
+                transport="streamable-http",
+                host="0.0.0.0",
+                port=port,
+            )
         )
-    )
